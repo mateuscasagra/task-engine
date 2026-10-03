@@ -1,0 +1,53 @@
+## Desafio: TaskEngine — Motor de Processamento Assíncrono com Outbox Pattern e Rate Limiting
+
+Desenvolva um **serviço de agendamento e execução de tarefas assíncronas concorrente**, focado em resiliência, baixa latência e observabilidade. O objetivo é demonstrar domínio de concorrência nativa do Go, padrões de resiliência de microsserviços e integração com infraestrutura sem depender de frameworks pesados.
+
+---
+
+### Requisitos Arquiteturais e Funcionais
+
+#### 1. Ingestão e Idempotência (API Layer)
+
+* **Interface REST ou gRPC**: Endpoints para criação, cancelamento e consulta de status de tarefas.
+* **Garantia de Idempotência**: Validação de cabeçalho `X-Idempotency-Key` utilizando Redis para evitar execuções duplicadas de chamadas concorrentes.
+* **Transactional Outbox Pattern**: As tarefas submetidas devem ser salvas no PostgreSQL dentro da mesma transação da regra de negócio antes de serem despachadas para o worker.
+
+#### 2. Processamento Concorrente (Worker Engine)
+
+* **Worker Pool Dinâmico**: Gerenciamento de múltiplos trabalhadores via `goroutines` e `channels`, com limite configurável via variáveis de ambiente.
+* **Controle de Ciclo de Vida**: Uso rigoroso de `context.Context` para propagação de timeout, cancelamento em cadeia e **Graceful Shutdown** ao receber sinais de terminação do SO (`SIGINT`, `SIGTERM`).
+
+#### 3. Resiliência e Tolerância a Falhas
+
+* **Rate Limiting Distribuído**: Limitador de taxa global e por cliente (algoritmo *Token Bucket* ou *Sliding Window*) usando Redis.
+* **Estratégia de Retry**: Re-tentativa com **Exponential Backoff e Jitter** para falhas transitórias.
+* **Dead Letter Queue (DLQ)**: Tarefas que excederem o limite de tentativas devem ser movidas automaticamente para um estado de DLQ no banco de dados para auditoria manual.
+
+#### 4. Observabilidade e Testes
+
+* **Structured Logging**: Uso da biblioteca nativa `log/slog` injetando `trace_id` e `job_id` em todos os contextos de execução.
+* **Métricas Prometheus**: Endpoint `/metrics` expondo contagem de jobs (sucesso/falha/retry), tempo de execução (histograma) e número de goroutines ativas.
+* **Testes de Integração com `testcontainers-go**`: Suíte de testes automatizados subindo contêineres reais de PostgreSQL e Redis durante a execução da suíte.
+
+---
+
+### Stack Recomendada
+
+| Componente | Tecnologia |
+| --- | --- |
+| **Linguagem** | Go 1.22+ (utilizando recursos como `log/slog` e `range over func` se aplicável) |
+| **Persistência** | PostgreSQL (Jobs, Outbox e Historico) + Redis (Cache de Idempotência e Rate Limit) |
+| **Driver de Banco** | `pgx/v5` e `redis/v9` |
+| **Métricas** | `prometheus/client_golang` |
+| **Ambiente de Dev** | `docker-compose` para infraestrutura local |
+
+---
+
+### Como Destaque este Projeto no Currículo
+
+Ao concluir o projeto, inclua os seguintes destaques (*bullet points*) nas seções de experiência ou projetos do seu currículo:
+
+* **Arquitetura de Concorrência**: *"Desenvolvi um motor assíncrono de tarefas em Go utilizando worker pools e channels, capaz de gerenciar shutdown gracioso e vazamento zero de goroutines sob alta carga."*
+* **Resiliência e Consistência**: *"Implementei o Transactional Outbox Pattern e Idempotência com Redis/PostgreSQL, garantindo entrega at-least-once e prevenção contra chamadas duplicadas."*
+* **Práticas de Engenharia**: *"Criei testes de integração automatizados utilizando `testcontainers-go` para validação de resiliência e concorrência em cenários reais de banco de dados."*
+* **Observabilidade**: *"Instrumentei métricas Prometheus e logs estruturados em formato JSON com `slog` para rastreamento de ciclo de vida completo de processos assíncronos."*
