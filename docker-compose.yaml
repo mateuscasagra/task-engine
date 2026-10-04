@@ -1,0 +1,32 @@
+name: task-engine
+services:
+  go:
+    container_name: go
+    build: .
+    ports: 
+      - "8080:8080"
+    volumes:
+      - .:/app
+    networks:
+      - private_network
+    
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASS}
+      POSTGRES_DB: task_engine ${DB}
+    networks:
+      - private_network
+  
+networks:
+  private_network:
+    driver: bridge
+
+
+  
+    
+    
