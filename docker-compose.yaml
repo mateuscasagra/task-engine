@@ -18,7 +18,15 @@ services:
     environment:
       POSTGRES_USER: ${USER}
       POSTGRES_PASSWORD: ${PASS}
-      POSTGRES_DB: task_engine ${DB}
+      POSTGRES_DB: ${DB}
+    networks:
+      - private_network
+
+  redis:
+    container_name: redis
+    image: redis 
+    ports:
+      - "6379:6379"
     networks:
       - private_network
   

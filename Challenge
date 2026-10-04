@@ -41,13 +41,3 @@ Desenvolva um **serviço de agendamento e execução de tarefas assíncronas con
 | **Métricas** | `prometheus/client_golang` |
 | **Ambiente de Dev** | `docker-compose` para infraestrutura local |
 
----
-
-### Como Destaque este Projeto no Currículo
-
-Ao concluir o projeto, inclua os seguintes destaques (*bullet points*) nas seções de experiência ou projetos do seu currículo:
-
-* **Arquitetura de Concorrência**: *"Desenvolvi um motor assíncrono de tarefas em Go utilizando worker pools e channels, capaz de gerenciar shutdown gracioso e vazamento zero de goroutines sob alta carga."*
-* **Resiliência e Consistência**: *"Implementei o Transactional Outbox Pattern e Idempotência com Redis/PostgreSQL, garantindo entrega at-least-once e prevenção contra chamadas duplicadas."*
-* **Práticas de Engenharia**: *"Criei testes de integração automatizados utilizando `testcontainers-go` para validação de resiliência e concorrência em cenários reais de banco de dados."*
-* **Observabilidade**: *"Instrumentei métricas Prometheus e logs estruturados em formato JSON com `slog` para rastreamento de ciclo de vida completo de processos assíncronos."*
