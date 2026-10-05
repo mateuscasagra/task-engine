@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func Conn() *sql.DB {
+func Postgres() *sql.DB {
 	errEnv := godotenv.Load()
 
 	if errEnv != nil {
